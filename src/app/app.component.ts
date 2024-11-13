@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
+
+import { Post } from './post.model';
+import { PostsService } from './posts.service';
 
 @Component({
   selector: 'app-root',
@@ -7,27 +11,30 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  loadedPosts = [];
+  loadedPosts: Post[] = [];
+  isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postsService: PostsService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.postsService.fetchPosts();
+  }
 
-  onCreatePost(postData: { title: string; content: string }) {
-    // Send Http request
-    this.http.post(
-      'https://http-tutorial-1a6b0-default-rtdb.firebaseio.com/posts.json', postData
-    ).subscribe(responseData => {
-      console.log(responseData);
-    });
+  onCreatePost(postData: Post) {
+    this.postsService.createAndStorePost(postData.title, postData.content);
+
 
   }
 
   onFetchPosts() {
-    // Send Http request
+    this.postsService.fetchPosts();
   }
 
   onClearPosts() {
     // Send Http request
   }
+
+
+
+
 }
